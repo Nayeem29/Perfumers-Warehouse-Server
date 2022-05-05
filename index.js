@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
 
 require('dotenv').config();
@@ -16,11 +16,34 @@ async function run() {
   try {
     await client.connect();
     const perfumesCollection = client.db('perfumers').collection('products');
+    // get all products
     app.get('/products', async (req, res) => {
       const query = {};
       const cursor = perfumesCollection.find(query);
       const products = await cursor.toArray();
       res.send(products);
+    })
+    //get products by id
+    app.get('/products/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const perfume = await perfumesCollection.findOne(query);
+      res.send(perfume);
+    })
+
+    //Update Quantity
+    app.put('/products/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) }
+      const doc = req.body;
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          quantity: doc.quantity
+        }
+      };
+      const result = await perfumesCollection.updateOne(filter, updatedDoc, options);
+      res.send(result);
     })
   } finally {
 
