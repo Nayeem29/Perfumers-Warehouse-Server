@@ -16,6 +16,7 @@ async function run() {
   try {
     await client.connect();
     const perfumesCollection = client.db('perfumers').collection('products');
+    const myCollection = client.db('perfumers').collection('myProducts');
     // get all products
     app.get('/products', async (req, res) => {
       const query = {};
@@ -30,6 +31,13 @@ async function run() {
       const perfume = await perfumesCollection.findOne(query);
       res.send(perfume);
     })
+    // get items of myProducts
+    app.get('/myProducts', async (req, res) => {
+      const query = {}
+      const cursor = myCollection.find(query);
+      const myProducts = await cursor.toArray();
+      res.send(myProducts);
+    })
 
     //Update Quantity
     app.put('/products/:id', async (req, res) => {
@@ -43,6 +51,26 @@ async function run() {
         }
       };
       const result = await perfumesCollection.updateOne(filter, updatedDoc, options);
+      res.send(result);
+    })
+
+    //Post a product
+    app.post('/products', async (req, res) => {
+      const doc = req.body;
+      const result = await perfumesCollection.insertOne(doc);
+      res.send(result);
+    })
+    //Post product to my products
+    app.post('/myProducts', async (req, res) => {
+      const doc = req.body;
+      const result = await myCollection.insertOne(doc);
+      res.send(result);
+    })
+    //Delete a product
+    app.delete('/products/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await perfumesCollection.deleteOne(query);
       res.send(result);
     })
   } finally {
