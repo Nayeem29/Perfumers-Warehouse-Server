@@ -32,12 +32,19 @@ async function run() {
       res.send(perfume);
     })
     // get items of myProducts
-    app.get('/myProducts', async (req, res) => {
-      const query = {}
-      const cursor = myCollection.find(query);
-      const myProducts = await cursor.toArray();
-      res.send(myProducts);
-    })
+    // app.get('/myProducts', async (req, res) => {
+    //   const query = {}
+    //   const cursor = myCollection.find(query);
+    //   const myProducts = await cursor.toArray();
+    //   res.send(myProducts);
+    // })
+    // //get myProductsby id
+    // app.get('/myProducts/:id', async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: ObjectId(id) };
+    //   const result = await myCollection.findOne(query);
+    //   res.send(result);
+    // })
 
     //Update Quantity
     app.put('/products/:id', async (req, res) => {
@@ -54,6 +61,21 @@ async function run() {
       res.send(result);
     })
 
+    //Update Email for My products
+    // app.put('/myProducts/:id', async (req, res) => {
+    //   const id = req.params.id;
+    //   const filter = { _id: ObjectId(id) };
+    //   const doc = req.body;
+    //   const options = { upsert: true };
+    //   const updatedDoc = {
+    //     $set: {
+    //       email: doc.email
+    //     }
+    //   }
+    //   const result = await myCollection.updateOne(filter, updatedDoc, options);
+    //   res.send(result);
+    // })
+
     //Post a product
     app.post('/products', async (req, res) => {
       const doc = req.body;
@@ -61,18 +83,25 @@ async function run() {
       res.send(result);
     })
     //Post product to my products
-    app.post('/myProducts', async (req, res) => {
-      const doc = req.body;
-      const result = await myCollection.insertOne(doc);
-      res.send(result);
-    })
-    //Delete a product
+    // app.post('/myProducts', async (req, res) => {
+    //   const doc = req.body;
+    //   const result = await myCollection.insertOne(doc);
+    //   res.send(result);
+    // })
+    //Delete a product from all products
     app.delete('/products/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await perfumesCollection.deleteOne(query);
       res.send(result);
     })
+    // Delete a product from myProducts
+    // app.delete('/myProducts/:id', async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: ObjectId(id) };
+    //   const result = await myCollection.deleteOne(query);
+    //   res.send(result);
+    // })
   } finally {
 
   }
